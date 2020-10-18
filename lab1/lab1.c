@@ -7,11 +7,11 @@ struct Indexes{
     int col[15];
 };
 
-int is_up(int row_index, int col_index, char word[], char board[][15], struct Indexes *final_indexes); // +
+int is_up(int row_index, int col_index, char word[], char board[][15], struct Indexes *final_indexes);
 int is_up_right(int row_index, int col_index, char word[], char board[][15], struct Indexes *final_indexes);
-int is_right(int row_index, int col_index, char word[], char board[][15], struct Indexes *final_indexes);  // +
-int is_down(int row_index, int col_index, char word[], char board[][15], struct Indexes *final_indexes);   // +
-int is_down_right(int row_index, int col_index, char word[], char board[][15], struct Indexes *final_indexes); //+
+int is_right(int row_index, int col_index, char word[], char board[][15], struct Indexes *final_indexes);
+int is_down(int row_index, int col_index, char word[], char board[][15], struct Indexes *final_indexes);
+int is_down_right(int row_index, int col_index, char word[], char board[][15], struct Indexes *final_indexes);
 int is_left(int row_index, int col_index, char word[], char board[][15], struct Indexes *final_indexes);
 int is_up_left(int row_index, int col_index, char word[], char board[][15], struct Indexes *final_indexes);
 int is_down_left(int row_index, int col_index, char word[], char board[][15], struct Indexes *final_indexes);
@@ -57,11 +57,23 @@ int main()
         if (flag) break;
     }
 
-    if (target_indexes.is_full)     // test
-        for (int i = 0; i < strlen(target_word); ++i)
-            printf("row index: %d, col: index %d\n", target_indexes.row[i], target_indexes.col[i]);
-    printf("%s\n", target_word);
+    // filling the arr with stars
+    for (int i = 0; i < 15; ++i)
+        for (int j = 0; j < 15; ++j)
+            arr[i][j] = '*';
 
+    // rewriting stars arr with target word if there's one
+    if (target_indexes.is_full)
+        for (int i = 0; i < strlen(target_word); ++i)
+            arr[target_indexes.row[i]][target_indexes.col[i]] = target_word[i];
+
+    // printing arr
+    for (int i = 0; i < 15; ++i)
+    {
+        for (int j = 0; j < 15; ++j)
+            printf("%c", arr[i][j]);
+        printf("\n");
+    }
 
     return 0;
 }
@@ -195,7 +207,7 @@ int is_down_left(int row_index, int col_index, char word[], char board[][15], st
     if (15 - row_index >= strlen(word) && col_index+1 >= strlen(word))
     {
         char word_to_compare[15];
-        for (int i = row_index, j = col_index, k = 0; k < strlen(word); --i, ++j, ++k)
+        for (int i = row_index, j = col_index, k = 0; k < strlen(word); ++i, --j, ++k)
         {
             word_to_compare[k] = board[i][j];
             final_indexes->row[k] = i;
