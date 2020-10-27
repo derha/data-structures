@@ -15,8 +15,8 @@ struct Blob
 
 int any_point(struct Point *points, int amount);
 int are_compatible(struct Point point1, struct Point point2);
-int* sort_arr(int *arr, int size);
-void print_arr(int *arr, int size);
+void sort_arr(int *arr, int size);
+void swap(int *i1, int *i2);
 
 //---------------------------------------------------------------------------------------------------------------------
 
@@ -96,8 +96,12 @@ int main()
     free(points_arr);
     free(working_blob.points);
 
+    // sort and print
     sort_arr(blobs_values, blob_counter);
-    print_arr(blobs_values, blob_counter);
+    printf("%d", blob_counter);
+    for (int i = 0; i < blob_counter; ++i)
+        printf(" %d", blobs_values[i]);
+    printf("\n");
 
     // cleaning2
     free(blobs_values);
@@ -123,4 +127,19 @@ int are_compatible(struct Point point1, struct Point point2)
         return 1;
 
     return 0;
+}
+
+void sort_arr(int *arr, int size)
+{
+    for (int i = 0; i < size-1; ++i)
+        for (int j = 0; j < size-1-i; ++j)
+            if (arr[j] > arr[j+1])
+                swap(&arr[j], &arr[j+1]);
+}
+
+void swap(int *i1, int *i2)
+{
+    int temp = *i1;
+    *i1 = *i2;
+    *i2 = temp;
 }
