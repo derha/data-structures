@@ -15,6 +15,8 @@ struct Blob
 
 int any_point(struct Point *points, int amount);
 int are_compatible(struct Point point1, struct Point point2);
+int* sort_arr(int *arr, int size);
+void print_arr(int *arr, int size);
 
 //---------------------------------------------------------------------------------------------------------------------
 
@@ -31,7 +33,7 @@ int main()
     int *blobs_values = (int *)malloc(sizeof(int) * (int)rows*cols/2);
     int blob_counter = 0;
     int point_counter = 0;
-    int flag = 0;
+    int flag;
 
     // input of points indexes
     for (int i = 0;; ++i)
@@ -90,6 +92,15 @@ int main()
     // add the last blob from working_blob
     blobs_values[blob_counter++] = working_blob.counter;
 
+    // cleaning1
+    free(points_arr);
+    free(working_blob.points);
+
+    sort_arr(blobs_values, blob_counter);
+    print_arr(blobs_values, blob_counter);
+
+    // cleaning2
+    free(blobs_values);
 
     return 0;
 }
