@@ -15,7 +15,7 @@ struct Blob
 
 int any_point(struct Point *points, int amount);
 int are_compatible(struct Point point1, struct Point point2);
-void sort_arr(int *arr, int size);
+void sort_blobs(int *arr, int size);
 void swap(int *i1, int *i2);
 
 //---------------------------------------------------------------------------------------------------------------------
@@ -30,7 +30,7 @@ int main()
     struct Blob working_blob;
     working_blob.points = (struct Point *)malloc(sizeof(struct Point) * rows*cols);
     working_blob.counter = 0;
-    int *blobs_values = (int *)malloc(sizeof(int) * (int)rows*cols/2);
+    int *blobs_values = (int *)malloc(sizeof(int) * (int)(rows*cols/2));
     int blob_counter = 0;
     int point_counter = 0;
     int flag;
@@ -64,7 +64,7 @@ int main()
                 working_blob.counter++;
                 points_arr[i].row = -1;
                 flag = 0;
-                break;
+                continue;
             }
 
             // check for compatibility
@@ -72,16 +72,16 @@ int main()
             {
                 if (are_compatible(points_arr[i], working_blob.points[j]))
                 {
-                    working_blob.points[0].row = points_arr[i].row;
-                    working_blob.points[0].col = points_arr[i].col;
+                    working_blob.points[working_blob.counter].row = points_arr[i].row;
+                    working_blob.points[working_blob.counter].col = points_arr[i].col;
                     points_arr[i].row = -1;
                     working_blob.counter++;
                     flag = 0;
+                    break;
                 }
             }
         }
-
-        // all points of a blob are found
+        
         if (flag)
         {
             blobs_values[blob_counter++] = working_blob.counter;
@@ -97,7 +97,7 @@ int main()
     free(working_blob.points);
 
     // sort and print
-    sort_arr(blobs_values, blob_counter);
+    sort_blobs(blobs_values, blob_counter);
     printf("%d", blob_counter);
     for (int i = 0; i < blob_counter; ++i)
         printf(" %d", blobs_values[i]);
@@ -129,7 +129,7 @@ int are_compatible(struct Point point1, struct Point point2)
     return 0;
 }
 
-void sort_arr(int *arr, int size)
+void sort_blobs(int *arr, int size)
 {
     for (int i = 0; i < size-1; ++i)
         for (int j = 0; j < size-1-i; ++j)
