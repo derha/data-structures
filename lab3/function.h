@@ -25,6 +25,12 @@ struct newNodeGS
 };
 
 
+// You must write all the function definitions to be used in this lab into this file.
+// You may also write other functions that may be called from our functions.
+// Do not make any changes to the main.c file.
+// Upload function.h file to the system as StudentNumber.h.
+
+
 void insertFB(struct nodeFB **startFB, int id, int age)
 {
     // special case for the first element
@@ -158,7 +164,55 @@ void printGS(struct nodeGS *startGS)
     printf("\n");
 }
 
-// You must write all the function definitions to be used in this lab into this file. 
-// You may also write other functions that may be called from our functions.
-// Do not make any changes to the main.c file.
-// Upload function.h file to the system as StudentNumber.h.
+void createFinalList(struct newNodeFB **startNewFB, struct nodeFB *startFB, struct nodeGS *startGS)
+{
+    struct nodeFB *ptrFB = startFB;
+    struct nodeGS *ptrGS = startGS;
+    struct newNodeFB *ptrNewFB = (struct newNodeFB *)malloc(sizeof(struct newNodeFB));
+    struct newNodeGS *ptrNewGS = (struct newNodeGS *)malloc(sizeof(struct newNodeGS));
+
+    // first two nodes
+    ptrNewFB->id = ptrFB->id;
+    ptrNewFB->age = ptrFB->age;
+    ptrNewFB->next = ptrNewGS;
+
+    *startNewFB = ptrNewFB;
+
+    ptrNewGS->id = ptrGS->id;
+    ptrNewGS->next = NULL;
+
+    // other nodes
+    while (ptrFB->next != NULL)
+    {
+        ptrFB = ptrFB->next;
+        ptrGS = ptrGS->next;
+
+        ptrNewGS->next = (struct newNodeFB *)malloc(sizeof(struct newNodeFB));
+        ptrNewFB = ptrNewGS->next;
+        ptrNewFB->id = ptrFB->id;
+        ptrNewFB->age = ptrFB->age;
+        ptrNewFB->next = (struct newNodeGS *)malloc(sizeof(struct newNodeGS));
+
+        ptrNewGS = ptrNewFB->next;
+        ptrNewGS->id = ptrGS->id;
+        ptrNewGS->next = NULL;
+    }
+}
+
+void printAll(struct newNodeFB *startNewFB)
+{
+    struct newNodeFB *ptrFB = startNewFB;
+    struct newNodeGS *ptrGS = startNewFB->next;
+    while (ptrGS != NULL)
+    {
+        printf("%d %d\n", ptrFB->id, ptrFB->age);
+        printf("%d\n", ptrGS->id);
+
+        ptrFB = ptrGS->next;
+        if (ptrFB != NULL)
+            ptrGS = ptrFB->next;
+        else
+            ptrGS = NULL;
+    }
+    printf("\n");
+}
