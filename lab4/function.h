@@ -80,8 +80,16 @@ void insert(struct nodeClass **head, int id, int midterm)
         class_node->studentPtr = student_node;
 
     // special case if midterm is greater than the one at the start
-    else if (midterm > class_node->studentPtr->midterm)
+    else if (midterm >= class_node->studentPtr->midterm)
     {
+        // if midterms are equal, studentIDs should be in ascending order
+        if (midterm == class_node->studentPtr->midterm && student_node->studentID > class_node->studentPtr->studentID)
+        {
+            int temp = student_node->studentID;
+            student_node->studentID = class_node->studentPtr->studentID;
+            class_node->studentPtr->studentID = temp;
+        }
+
         student_node->next = class_node->studentPtr;
         class_node->studentPtr = student_node;
     }
@@ -97,8 +105,16 @@ void insert(struct nodeClass **head, int id, int midterm)
             ptr = ptr->next;
 
             // insert current node before the node with smaller midterm
-            if (midterm > ptr->midterm)
+            if (midterm >= ptr->midterm)
             {
+                // if midterms are equal, studentIDs should be in ascending order
+                if (midterm == ptr->midterm && student_node->studentID > ptr->studentID)
+                {
+                    int temp = student_node->studentID;
+                    student_node->studentID = ptr->studentID;
+                    ptr->studentID = temp;
+                }
+
                 student_node->next = ptr;
                 preptr->next = student_node;
                 return;
@@ -109,15 +125,39 @@ void insert(struct nodeClass **head, int id, int midterm)
         if (!(ptr->next))
             ptr->next = student_node;
     }
-
 }
+
+
+void computeClassAverage(struct nodeClass *head)
+{
+    struct nodeClass *class_ptr = head;
+    while (class_ptr != NULL)
+    {
+        double numerator = 0;
+        int denominator = 0;
+
+        struct nodeStudent *student_ptr = class_ptr->studentPtr;
+        while (student_ptr != NULL)
+        {
+            numerator += student_ptr->midterm;
+            denominator += 1;
+            student_ptr = student_ptr->next;
+        }
+
+        if (denominator)
+            class_ptr->classMidtermAverage = numerator / denominator;
+
+        class_ptr = class_ptr->next;
+    }
+}
+
 
 void printAll(struct nodeClass *head)
 {
     struct nodeClass *class_ptr = head;
     while (class_ptr != NULL)
     {
-        printf("%d %lf\n", class_ptr->classID, class_ptr->classMidtermAverage);
+        printf("%d %0.2lf\n", class_ptr->classID, class_ptr->classMidtermAverage);
         struct nodeStudent *student_ptr = class_ptr->studentPtr;
         while (student_ptr != NULL)
         {

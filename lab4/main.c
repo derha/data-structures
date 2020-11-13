@@ -1,6 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
-#include <malloc.h>
+// #include <malloc.h>
 
 #include "function.h"
 
@@ -11,7 +11,7 @@ int main()
 
 	int id, midterm;
 	scanf("%d", &id);
-	while(id!=-1)
+	while(id != -1)
 	{
 		scanf("%d", &midterm);
 		insert(&head, id, midterm);
@@ -20,7 +20,7 @@ int main()
 
 	computeClassAverage(head);
 
-	printAll(head).
+	printAll(head);
 
 	return 0;
 
