@@ -87,24 +87,18 @@ void print_tree(struct node *root)
 
 int print_level(struct node *root, int until_stop)
 {
-    int flag = 0;
-
     if (!until_stop)
     {
         if (root->left_child != NULL)
-        {
             printf("%d %d (%d L) ", root->left_child->id, root->left_child->grade, root->grade);
-            flag = 1;
-        }
 
         if (root->right_child != NULL)
-        {
             printf("%d %d (%d R) ", root->right_child->id, root->right_child->grade, root->grade);
-            flag = 1;
-        }
 
-        return flag;
+        return 1;
     }
+
+    int flag = 0;
 
     if (root->left_child != NULL)
         if (print_level(root->left_child, until_stop - 1))
