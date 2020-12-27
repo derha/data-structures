@@ -13,6 +13,7 @@ void insert(struct node **root, struct node *new_node);
 void print_nums(struct node *root);
 void print_tree(struct node *root);
 int print_level(struct node *root, int until_stop);
+int update_balance(struct node *root);
 
 //----------------------------------------------------------------------------------------------------------------------
 
@@ -35,6 +36,13 @@ int main()
         new_node->right_child = NULL;
 
         insert(&root, new_node);
+        update_balance(root);
+
+        if (root->balance >= -1 && root->balance <= 1)
+            continue;
+
+        // do some stuff with rotation
+        update_balance(root);
     }
 
     print_nums(root);
@@ -109,4 +117,25 @@ int print_level(struct node *root, int until_stop)
             flag = 1;
 
     return flag;
+}
+
+int update_balance(struct node *root)
+{
+    if (!(root->left_child) && !(root->right_child))
+        return 1;
+
+    int l_height = 0;
+    int r_height = 0;
+
+    if (root->left_child != NULL)
+        l_height = update_balance(root->left_child);
+
+    if (root->right_child != NULL)
+        r_height = update_balance(root->right_child);
+
+    root->balance = l_height - r_height;
+
+    if (l_height > r_height)
+        return l_height + 1;
+    return r_height + 1;
 }
