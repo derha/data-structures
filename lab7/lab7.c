@@ -9,7 +9,7 @@ struct node
     struct node *right_child;
 };
 
-void insert(struct node **root, struct node *new_node);
+struct node* insert(struct node **current_node, struct node *new_node, struct node **root);
 void print_nums(struct node *root);
 void print_tree(struct node *root);
 int print_level(struct node *root, int until_stop);
@@ -35,14 +35,7 @@ int main()
         new_node->left_child = NULL;
         new_node->right_child = NULL;
 
-        insert(&root, new_node);
-        update_balance(root);
-
-        if (root->balance >= -1 && root->balance <= 1)
-            continue;
-
-        // do some stuff with rotation
-        update_balance(root);
+        insert(&root, new_node, &root);
     }
 
     print_nums(root);
@@ -54,18 +47,92 @@ int main()
 
 //----------------------------------------------------------------------------------------------------------------------
 
-void insert(struct node **root, struct node *new_node)
+struct node* insert(struct node **current_node, struct node *new_node, struct node **root)
 {
-    if (!(*root))
+    // actual insertion of a new node as a leaf
+    if (!(*current_node))
     {
-        *root = new_node;
-        return;
+        *current_node = new_node;
+        update_balance(*root);
+        return NULL;
     }
 
-    if (new_node->num < (*root)->num)
-        insert(&((*root)->left_child), new_node);
+    struct node *new_child = NULL;
+    if (new_node->num < (*current_node)->num)
+        new_child = insert(&((*current_node)->left_child), new_node, root);
     else
-        insert(&((*root)->right_child), new_node);
+        new_child = insert(&((*current_node)->right_child), new_node, root);
+    if (new_child)
+    {
+        if (new_child->num < (*current_node)->num)
+            (*current_node)->left_child = new_child;
+        else
+            (*current_node)->right_child = new_child;
+        update_balance(*root);
+    }
+
+    struct node *new_root = NULL;
+    // LL rotation
+    if ((*current_node)->balance == 2 && ((*current_node)->left_child)->balance == 1)
+    {
+        new_root = (*current_node)->left_child;
+        (*current_node)->left_child = new_root->right_child;
+        new_root->right_child = *current_node;
+
+        if ((*root)->num == (*current_node)->num)
+        {
+            *root = new_root;
+            return NULL;
+        }
+    }
+
+    // RR rotation
+    else if ((*current_node)->balance == -2 && ((*current_node)->right_child)->balance == -1)
+    {
+        new_root = (*current_node)->right_child;
+        (*current_node)->right_child = new_root->left_child;
+        new_root->left_child = *current_node;
+
+        if ((*root)->num == (*current_node)->num)
+        {
+            *root = new_root;
+            return NULL;
+        }
+    }
+
+    // LR rotation
+    else if ((*current_node)->balance == 2 && ((*current_node)->left_child)->balance == -1)
+    {
+        new_root = (*current_node)->left_child->right_child;
+        (*current_node)->left_child->right_child = new_root->left_child;
+        new_root->left_child = (*current_node)->left_child;
+        (*current_node)->left_child = new_root->right_child;
+        new_root->right_child = *current_node;
+
+        if ((*root)->num == (*current_node)->num)
+        {
+            *root = new_root;
+            return NULL;
+        }
+    }
+
+    // RL rotation
+    else if ((*current_node)->balance == -2 && ((*current_node)->right_child)->balance == 1)
+    {
+        new_root = (*current_node)->right_child->left_child;
+        (*current_node)->right_child->left_child = new_root->right_child;
+        new_root->right_child = (*current_node)->right_child;
+        (*current_node)->right_child = new_root->left_child;
+        new_root->left_child = *current_node;
+
+        if ((*root)->num == (*current_node)->num)
+        {
+            *root = new_root;
+            return NULL;
+        }
+    }
+
+    return new_root;
 }
 
 void print_nums(struct node *root)
@@ -122,7 +189,10 @@ int print_level(struct node *root, int until_stop)
 int update_balance(struct node *root)
 {
     if (!(root->left_child) && !(root->right_child))
+    {
+        root->balance = 0;
         return 1;
+    }
 
     int l_height = 0;
     int r_height = 0;
