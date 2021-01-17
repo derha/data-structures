@@ -1,2 +1,2 @@
 # Data structures
-Everything related to labs from data structures university course(COM2067)
+Labs from data structures course(COM2067)
